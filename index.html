@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>中传春游活动报名</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #0071e3;
+      --blue-link: #0066cc;
+      --bg-light: #f5f5f7;
+      --bg-dark: #000000;
+      --text-dark: #1d1d1f;
+      --text-body: rgba(0,0,0,0.8);
+      --text-secondary: rgba(0,0,0,0.48);
+      --shadow-card: rgba(0,0,0,0.22) 3px 5px 30px 0px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: var(--bg-dark);
+      color: #fff;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      height: 48px;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 24px;
+    }
+    nav .nav-inner {
+      width: 100%; max-width: 980px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    nav .brand {
+      font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 17px; font-weight: 600;
+      color: #fff; text-decoration: none;
+      letter-spacing: -0.374px;
+    }
+    nav .nav-link {
+      font-size: 12px; color: rgba(255,255,255,0.8);
+      text-decoration: none;
+    }
+    nav .nav-link:hover { color: #fff; }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--bg-dark);
+      text-align: center;
+      padding: 80px 24px 64px;
+    }
+    .hero .eyebrow {
+      font-size: 14px; font-weight: 400;
+      color: var(--blue);
+      letter-spacing: -0.224px;
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: clamp(40px, 6vw, 56px);
+      font-weight: 600;
+      line-height: 1.07;
+      letter-spacing: -0.28px;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .hero .subtitle {
+      font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 21px; font-weight: 400;
+      line-height: 1.19; letter-spacing: 0.231px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 32px;
+    }
+    .hero-emoji { font-size: 56px; display: block; margin-bottom: 20px; }
+
+    /* ── Form Section ── */
+    .form-section {
+      background: var(--bg-light);
+      padding: 64px 24px 80px;
+    }
+    .form-wrap {
+      max-width: 560px; margin: 0 auto;
+    }
+    .section-title {
+      font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 28px; font-weight: 400;
+      line-height: 1.14; letter-spacing: 0.196px;
+      color: var(--text-dark);
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    /* Alert */
+    .alert {
+      padding: 12px 16px; border-radius: 8px;
+      font-size: 14px; letter-spacing: -0.224px;
+      margin-bottom: 20px; display: none;
+    }
+    .alert.show { display: block; }
+    .alert-error { background: #fff0f0; color: #c62828; }
+    .alert-info { background: #e8f5e9; color: #1b5e20; }
+
+    /* Form */
+    .form-group { margin-bottom: 20px; }
+    label {
+      display: block;
+      font-size: 12px; font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: -0.12px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    label .req { color: var(--blue); margin-left: 2px; }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: #fff;
+      border: none;
+      border-radius: 11px;
+      font-family: inherit;
+      font-size: 17px; font-weight: 400;
+      line-height: 1.47; letter-spacing: -0.374px;
+      color: var(--text-dark);
+      outline: none;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+      transition: box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+    input:focus, textarea:focus {
+      box-shadow: 0 0 0 3px rgba(0,113,227,0.35), 0 0 0 1px var(--blue);
+    }
+    input.error { box-shadow: 0 0 0 3px rgba(198,40,40,0.2), 0 0 0 1px #c62828; }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .field-error {
+      font-size: 12px; color: #c62828;
+      letter-spacing: -0.12px;
+      margin-top: 5px; display: none;
+    }
+    .field-error.show { display: block; }
+
+    /* Submit button */
+    .btn-submit {
+      display: block; width: 100%;
+      padding: 14px 15px;
+      background: var(--blue);
+      color: #fff;
+      border: none; border-radius: 8px;
+      font-family: inherit;
+      font-size: 17px; font-weight: 400;
+      line-height: 1; letter-spacing: -0.374px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 8px;
+    }
+    .btn-submit:hover { background: #0077ed; }
+    .btn-submit:active { transform: scale(0.98); background: #006edb; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-submit:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+
+    /* Success */
+    .success-view {
+      display: none; text-align: center; padding: 20px 0;
+    }
+    .success-view.show { display: block; }
+    .success-icon { font-size: 64px; margin-bottom: 16px; display: block; }
+    .success-view h2 {
+      font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 28px; font-weight: 400;
+      line-height: 1.14; letter-spacing: 0.196px;
+      color: var(--text-dark); margin-bottom: 8px;
+    }
+    .success-view p {
+      font-size: 17px; color: var(--text-body);
+      letter-spacing: -0.374px; margin-bottom: 24px;
+    }
+    .success-card {
+      background: #fff; border-radius: 12px;
+      padding: 20px 24px; text-align: left;
+      box-shadow: var(--shadow-card);
+    }
+    .success-card .row {
+      display: flex; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.06);
+      font-size: 14px; letter-spacing: -0.224px;
+    }
+    .success-card .row:last-child { border-bottom: none; }
+    .success-card .row .key { color: var(--text-secondary); }
+    .success-card .row .val { color: var(--text-dark); font-weight: 600; }
+
+    /* Footer */
+    footer {
+      background: var(--bg-dark);
+      padding: 24px;
+      text-align: center;
+    }
+    footer a {
+      font-size: 12px; color: rgba(255,255,255,0.4);
+      text-decoration: none; letter-spacing: -0.12px;
+    }
+    footer a:hover { color: rgba(255,255,255,0.7); }
+
+    /* Quota bar */
+    .quota-wrap { margin-top: 24px; max-width: 320px; margin-left: auto; margin-right: auto; }
+    .quota-text { font-size: 13px; color: rgba(255,255,255,0.6); letter-spacing: -0.12px; margin-bottom: 8px; }
+    .quota-track { height: 4px; background: rgba(255,255,255,0.15); border-radius: 980px; overflow: hidden; }
+    .quota-bar { height: 100%; width: 0%; border-radius: 980px; transition: width 0.6s ease, background 0.3s; }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .hero { padding: 60px 20px 48px; }
+      .hero h1 { font-size: 34px; }
+      .hero .subtitle { font-size: 17px; }
+      .form-section { padding: 48px 20px 64px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="brand">中国传媒大学</a>
+      <a href="admin.html" class="nav-link">管理员</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <span class="hero-emoji">🌸</span>
+    <p class="eyebrow">2025 春季活动</p>
+    <h1>春游报名</h1>
+    <p class="subtitle">踏青赏花 · 共享美好时光</p>
+    <div class="quota-wrap">
+      <div class="quota-text" id="quotaText">加载中…</div>
+      <div class="quota-track"><div class="quota-bar" id="quotaBar"></div></div>
+    </div>
+  </section>
+
+  <!-- Form -->
+  <section class="form-section">
+    <div class="form-wrap">
+      <h2 class="section-title">填写报名信息</h2>
+
+      <div class="alert alert-error" id="globalError"></div>
+      <div class="alert alert-info" id="globalInfo"></div>
+
+      <!-- 满员提示 -->
+      <div id="fullTip" style="display:none;text-align:center;padding:40px 0">
+        <div style="font-size:48px;margin-bottom:12px">😢</div>
+        <div style="font-family:'SF Pro Display',sans-serif;font-size:21px;font-weight:400;color:var(--text-dark);margin-bottom:8px">报名已截止</div>
+        <div style="font-size:14px;color:var(--text-secondary)">名额已满，感谢你的关注</div>
+      </div>
+
+      <form id="regForm">
+        <div class="form-group">
+          <label>姓名 <span class="req">*</span></label>
+          <input type="text" id="name" placeholder="请输入真实姓名" maxlength="20" autocomplete="name" />
+          <div class="field-error" id="nameErr">请输入姓名</div>
+        </div>
+
+        <div class="form-group">
+          <label>学号 <span class="req">*</span></label>
+          <input type="text" id="studentId" placeholder="请输入学号" maxlength="20" />
+          <div class="field-error" id="studentIdErr">请输入学号</div>
+        </div>
+
+        <div class="form-group">
+          <label>手机号 <span class="req">*</span></label>
+          <input type="tel" id="phone" placeholder="请输入 11 位手机号" maxlength="11" autocomplete="tel" />
+          <div class="field-error" id="phoneErr">请输入正确的 11 位手机号</div>
+        </div>
+
+        <div class="form-group">
+          <label>班级 / 院系 <span class="req">*</span></label>
+          <input type="text" id="classDept" placeholder="例：新闻学院 2023 级 1 班" maxlength="50" />
+          <div class="field-error" id="classDeptErr">请输入班级或院系</div>
+        </div>
+
+        <div class="form-group">
+          <label>备注 / 特殊需求</label>
+          <textarea id="note" placeholder="如饮食禁忌、是否需要接送等（选填）"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">立即报名</button>
+      </form>
+
+      <div class="success-view" id="successView">
+        <span class="success-icon">🎉</span>
+        <h2>报名成功</h2>
+        <p>期待与你一起踏青赏花</p>
+        <div class="success-card" id="successInfo"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <a href="admin.html">管理员入口</a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://xgsjfjnladazpptabvrt.supabase.co'
+    const SUPABASE_ANON_KEY = 'sb_publishable_Nm8ozN2ns6YY_O75-dDeiw_zRYTSQ6g'
+    const MAX_QUOTA = 30  // 修改此处设置名额上限
+
+    const { createClient } = supabase
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+    const form = document.getElementById('regForm')
+    const submitBtn = document.getElementById('submitBtn')
+
+    // 页面加载时检查名额
+    async function checkQuota() {
+      const { count } = await db.from('registrations').select('*', { count: 'exact', head: true })
+      const current = count || 0
+      const remaining = MAX_QUOTA - current
+      const pct = Math.min(100, Math.round(current / MAX_QUOTA * 100))
+
+      document.getElementById('quotaText').textContent = `已报名 ${current} / ${MAX_QUOTA} 人`
+      document.getElementById('quotaBar').style.width = pct + '%'
+      document.getElementById('quotaBar').style.background = pct >= 90 ? '#ff3b30' : pct >= 70 ? '#ff9500' : '#0071e3'
+
+      if (remaining <= 0) {
+        form.style.display = 'none'
+        document.getElementById('fullTip').style.display = 'block'
+      }
+      return remaining
+    }
+    checkQuota()
+
+    function showFieldError(id, msg) {
+      const err = document.getElementById(id + 'Err')
+      err.textContent = msg; err.classList.add('show')
+      document.getElementById(id).classList.add('error')
+    }
+    function clearFieldError(id) {
+      document.getElementById(id + 'Err').classList.remove('show')
+      document.getElementById(id).classList.remove('error')
+    }
+    function showGlobal(type, msg) {
+      ['globalError','globalInfo'].forEach(id => document.getElementById(id).classList.remove('show'))
+      const el = document.getElementById(type === 'error' ? 'globalError' : 'globalInfo')
+      el.textContent = msg; el.classList.add('show')
+    }
+
+    function validate() {
+      let ok = true
+      const fields = ['name','studentId','phone','classDept']
+      fields.forEach(f => clearFieldError(f))
+
+      if (!document.getElementById('name').value.trim()) {
+        showFieldError('name', '请输入姓名'); ok = false
+      }
+      if (!document.getElementById('studentId').value.trim()) {
+        showFieldError('studentId', '请输入学号'); ok = false
+      }
+      if (!/^1[3-9]\d{9}$/.test(document.getElementById('phone').value.trim())) {
+        showFieldError('phone', '请输入正确的 11 位手机号'); ok = false
+      }
+      if (!document.getElementById('classDept').value.trim()) {
+        showFieldError('classDept', '请输入班级或院系'); ok = false
+      }
+      return ok
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      if (!validate()) return
+
+      const name = document.getElementById('name').value.trim()
+      const studentId = document.getElementById('studentId').value.trim()
+      const phone = document.getElementById('phone').value.trim()
+      const classDept = document.getElementById('classDept').value.trim()
+      const note = document.getElementById('note').value.trim()
+
+      submitBtn.disabled = true
+      submitBtn.textContent = '提交中…'
+
+      try {
+        const { data: existing, error: qErr } = await db
+          .from('registrations').select('id').eq('student_id', studentId).maybeSingle()
+        if (qErr) throw qErr
+        if (existing) { showGlobal('error', `学号 ${studentId} 已报名，请勿重复提交`); return }
+
+        // 再次检查名额（防并发）
+        const remaining = await checkQuota()
+        if (remaining <= 0) return
+
+        const { error: iErr } = await db.from('registrations').insert({
+          name, student_id: studentId, phone, class_dept: classDept, note
+        })
+        if (iErr) throw iErr
+
+        form.style.display = 'none'
+        document.getElementById('successView').classList.add('show')
+        document.getElementById('successInfo').innerHTML = [
+          ['姓名', name],
+          ['学号', studentId],
+          ['班级', classDept],
+          ['手机', phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')]
+        ].map(([k,v]) => `<div class="row"><span class="key">${k}</span><span class="val">${v}</span></div>`).join('')
+
+      } catch (err) {
+        showGlobal('error', '提交失败，请稍后重试')
+        console.error(err)
+      } finally {
+        submitBtn.disabled = false
+        submitBtn.textContent = '立即报名'
+      }
+    })
+  </script>
+</body>
+</html>

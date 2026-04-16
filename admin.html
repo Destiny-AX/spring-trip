@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>报名管理 — 中传春游</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #0071e3;
+      --bg-light: #f5f5f7;
+      --text-dark: #1d1d1f;
+      --text-body: rgba(0,0,0,0.8);
+      --text-secondary: rgba(0,0,0,0.48);
+      --shadow-card: rgba(0,0,0,0.22) 3px 5px 30px 0px;
+    }
+
+    body {
+      font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Nav */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      height: 48px;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 24px;
+    }
+    nav .nav-inner {
+      width: 100%; max-width: 980px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    nav .brand {
+      font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 17px; font-weight: 600;
+      color: #fff; text-decoration: none; letter-spacing: -0.374px;
+    }
+    nav .nav-link { font-size: 12px; color: rgba(255,255,255,0.8); text-decoration: none; }
+    nav .nav-link:hover { color: #fff; }
+
+    /* Auth overlay */
+    #authOverlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200;
+    }
+    .auth-box {
+      background: #fff; border-radius: 12px;
+      padding: 36px 32px; width: 340px;
+      text-align: center;
+      box-shadow: var(--shadow-card);
+    }
+    .auth-box .lock { font-size: 40px; margin-bottom: 12px; display: block; }
+    .auth-box h2 {
+      font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 21px; font-weight: 400;
+      line-height: 1.19; letter-spacing: 0.231px;
+      color: var(--text-dark); margin-bottom: 6px;
+    }
+    .auth-box p { font-size: 14px; color: var(--text-secondary); letter-spacing: -0.224px; margin-bottom: 20px; }
+    .auth-box input {
+      width: 100%; padding: 12px 16px;
+      border: none; border-radius: 11px;
+      font-family: inherit; font-size: 17px;
+      color: var(--text-dark); outline: none;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+      margin-bottom: 12px;
+      transition: box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+    .auth-box input:focus { box-shadow: 0 0 0 3px rgba(0,113,227,0.35), 0 0 0 1px var(--blue); }
+    .auth-box button {
+      width: 100%; padding: 12px 15px;
+      background: var(--blue); color: #fff;
+      border: none; border-radius: 8px;
+      font-family: inherit; font-size: 17px; font-weight: 400;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .auth-box button:hover { background: #0077ed; }
+    .auth-err { color: #c62828; font-size: 12px; margin-top: 10px; display: none; letter-spacing: -0.12px; }
+    .auth-err.show { display: block; }
+
+    /* Main */
+    .main { padding: 32px 24px 64px; max-width: 980px; margin: 0 auto; }
+
+    /* Stats */
+    .stats { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .stat-card {
+      background: #fff; border-radius: 12px;
+      padding: 20px 24px; flex: 1; min-width: 140px;
+      box-shadow: var(--shadow-card);
+    }
+    .stat-card .num {
+      font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 40px; font-weight: 600;
+      line-height: 1.1; letter-spacing: -0.28px;
+      color: var(--blue);
+    }
+    .stat-card .lbl {
+      font-size: 12px; color: var(--text-secondary);
+      letter-spacing: -0.12px; margin-top: 4px;
+    }
+
+    /* Toolbar */
+    .toolbar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .toolbar input {
+      flex: 1; min-width: 200px;
+      padding: 9px 14px;
+      background: #fff; border: none; border-radius: 11px;
+      font-family: inherit; font-size: 14px; color: var(--text-dark);
+      outline: none;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+      transition: box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+    .toolbar input:focus { box-shadow: 0 0 0 3px rgba(0,113,227,0.3), 0 0 0 1px var(--blue); }
+    .btn {
+      padding: 9px 18px; border-radius: 8px;
+      font-family: inherit; font-size: 14px; font-weight: 400;
+      cursor: pointer; transition: opacity 0.2s; border: none;
+      letter-spacing: -0.224px;
+    }
+    .btn-blue { background: var(--blue); color: #fff; }
+    .btn-outline { background: #fff; color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+    .btn:hover { opacity: 0.85; }
+
+    /* Table */
+    .table-wrap {
+      background: #fff; border-radius: 12px;
+      box-shadow: var(--shadow-card); overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th {
+      padding: 14px 16px; text-align: left;
+      font-size: 12px; font-weight: 600;
+      color: var(--text-secondary); letter-spacing: -0.12px;
+      text-transform: uppercase; white-space: nowrap;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    td {
+      padding: 13px 16px;
+      border-top: 1px solid rgba(0,0,0,0.04);
+      color: var(--text-dark); letter-spacing: -0.224px;
+    }
+    tr:hover td { background: rgba(0,113,227,0.03); }
+    .no-data { text-align: center; padding: 48px; color: var(--text-secondary); font-size: 14px; }
+    .loading { text-align: center; padding: 48px; color: var(--text-secondary); font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <div id="authOverlay">
+    <div class="auth-box">
+      <span class="lock">🔒</span>
+      <h2>管理员验证</h2>
+      <p>请输入管理员密码</p>
+      <input type="password" id="pwdInput" placeholder="输入密码" />
+      <button onclick="checkPwd()">进入管理</button>
+      <div class="auth-err" id="pwdErr">密码错误，请重试</div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="brand">中国传媒大学</a>
+      <a href="index.html" class="nav-link">← 返回报名页</a>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="stats">
+      <div class="stat-card">
+        <div class="num" id="totalCount">—</div>
+        <div class="lbl">总报名人数</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="todayCount">—</div>
+        <div class="lbl">今日新增</div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="搜索姓名、学号或班级…" oninput="filterTable()" />
+      <button class="btn btn-outline" onclick="loadData()">刷新</button>
+      <button class="btn btn-blue" onclick="exportCSV()">导出 CSV</button>
+    </div>
+
+    <div class="table-wrap">
+      <div class="loading" id="loadingTip">加载中…</div>
+      <table id="dataTable" style="display:none">
+        <thead>
+          <tr>
+            <th>#</th><th>姓名</th><th>学号</th>
+            <th>手机号</th><th>班级 / 院系</th><th>备注</th><th>报名时间</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="no-data" id="noData" style="display:none">暂无报名数据</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://xgsjfjnladazpptabvrt.supabase.co'
+    const SUPABASE_ANON_KEY = 'sb_publishable_Nm8ozN2ns6YY_O75-dDeiw_zRYTSQ6g'
+    const ADMIN_PASSWORD = 'cuc2025'
+
+    const { createClient } = supabase
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    let allData = []
+
+    function checkPwd() {
+      if (document.getElementById('pwdInput').value === ADMIN_PASSWORD) {
+        document.getElementById('authOverlay').style.display = 'none'
+        loadData()
+      } else {
+        document.getElementById('pwdErr').classList.add('show')
+      }
+    }
+    document.getElementById('pwdInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkPwd() })
+
+    async function loadData() {
+      document.getElementById('loadingTip').style.display = 'block'
+      document.getElementById('dataTable').style.display = 'none'
+      document.getElementById('noData').style.display = 'none'
+
+      const { data, error } = await db.from('registrations').select('*').order('created_at', { ascending: false })
+      document.getElementById('loadingTip').style.display = 'none'
+      if (error) { alert('加载失败：' + error.message); return }
+
+      allData = data || []
+      renderStats(); renderTable(allData)
+    }
+
+    function renderStats() {
+      document.getElementById('totalCount').textContent = allData.length
+      const today = new Date().toISOString().slice(0, 10)
+      document.getElementById('todayCount').textContent = allData.filter(r => r.created_at?.startsWith(today)).length
+    }
+
+    function renderTable(rows) {
+      if (!rows.length) {
+        document.getElementById('noData').style.display = 'block'
+        document.getElementById('dataTable').style.display = 'none'
+        return
+      }
+      document.getElementById('dataTable').style.display = 'table'
+      document.getElementById('noData').style.display = 'none'
+      document.getElementById('tableBody').innerHTML = rows.map((r, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${esc(r.name)}</td><td>${esc(r.student_id)}</td>
+          <td>${esc(r.phone)}</td><td>${esc(r.class_dept)}</td>
+          <td>${esc(r.note || '—')}</td><td>${fmt(r.created_at)}</td>
+        </tr>`).join('')
+    }
+
+    function filterTable() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase()
+      renderTable(!q ? allData : allData.filter(r =>
+        (r.name||'').toLowerCase().includes(q) ||
+        (r.student_id||'').toLowerCase().includes(q) ||
+        (r.class_dept||'').toLowerCase().includes(q)
+      ))
+    }
+
+    function exportCSV() {
+      if (!allData.length) { alert('暂无数据可导出'); return }
+      const header = ['序号','姓名','学号','手机号','班级/院系','备注','报名时间']
+      const rows = allData.map((r,i) => [i+1,r.name,r.student_id,r.phone,r.class_dept,r.note||'',fmt(r.created_at)])
+      const csv = '\uFEFF' + [header,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n')
+      const a = Object.assign(document.createElement('a'), {
+        href: URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})),
+        download: `春游报名名单_${new Date().toISOString().slice(0,10)}.csv`
+      })
+      a.click()
+    }
+
+    const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    const fmt = iso => iso ? new Date(iso).toLocaleString('zh-CN',{hour12:false}) : '—'
+  </script>
+</body>
+</html>
