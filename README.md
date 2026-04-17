@@ -58,8 +58,11 @@ const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY'
 
 ---
 
+## 访问地址
+
+- 报名页：[https://destiny-ax.github.io/spring-trip/](https://destiny-ax.github.io/spring-trip/)
+- 管理页：[https://destiny-ax.github.io/spring-trip/admin.html](https://destiny-ax.github.io/spring-trip/admin.html)
+
 ## 使用方式
 
-配置完成后，直接用浏览器打开 `index.html` 即可，无需本地服务器。
-
-也可以将两个文件上传到任意静态托管平台（GitHub Pages、Vercel、Netlify 等）。
+配置完成后，直接访问上方地址即可，无需本地服务器。
